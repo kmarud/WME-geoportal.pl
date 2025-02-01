@@ -8,6 +8,7 @@
 // @include         https://*.waze.com/beta_editor*
 // @copyright       2013-2025+, Patryk Ściborek, Paweł Pyrczak, Kamil Marud
 // @run-at          document-end
+// @grant           none
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=waze.com
 // @namespace https://greasyfork.org/users/1430039
 // @downloadURL https://update.greasyfork.org/scripts/525577/Geoportal%20Waze%20integration.user.js
