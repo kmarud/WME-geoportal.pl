@@ -2,7 +2,6 @@
 // @name            Geoportal Waze integration
 // @version         1.0
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
-// @grant           none
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
 // @include         https://*.waze.com/map-editor*
@@ -10,20 +9,21 @@
 // @copyright       2013-2025+, Patryk Ściborek, Paweł Pyrczak, Kamil Marud
 // @run-at          document-end
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=waze.com
-// @downloadURL     https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.user.js
-// @updateURL       https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.meta.js
+// @namespace https://greasyfork.org/users/1430039
+// @downloadURL https://update.greasyfork.org/scripts/525577/Geoportal%20Waze%20integration.user.js
+// @updateURL https://update.greasyfork.org/scripts/525577/Geoportal%20Waze%20integration.meta.js
 // ==/UserScript==
 
 /**
  * Source code: https://github.com/TKr/WME-geoportal - deprecated
  * Source code: https://github.com/strah/WME-geoportal.pl - versions up to 0.2.15.21
- * Source code: https://github.com/kmarud/WME-geoportal.pl
+ * Source code: https://github.com/kmarud/WME-geoportal.pl -version >= 1.0
  */
 
 
 /* Changelog:
  *
- *  1.0 - Refactored
+ *  1.0 - Refactored, simplified code
  *  0.2.15.21 - added city, voivodeship and country borders overlay (by Falcon4Tech)
  *  0.2.15.20 - css tweaks - moving toggles to the "view" section
  *  0.2.15.19 - css tweaks
@@ -70,7 +70,7 @@
             const wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
             const wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?";
             const wms_parcels="https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?";
-            const wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&"
+            const wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
             const my_wazeMap = w;
 
             const epsg900913 = new window.OpenLayers.Projection("EPSG:900913");
@@ -391,7 +391,7 @@
                 console.log('Geoportal: layers added');
                 this.OrtoTimer();
             }
-        }
+        };
 
         GEOPORTAL.OrtoTimer = function() {
             setTimeout(function(){
