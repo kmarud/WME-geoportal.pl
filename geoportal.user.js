@@ -9,14 +9,15 @@
 // @include         https://*.waze.com/beta_editor*
 // @copyright       2013-2025+, Patryk Ściborek, Paweł Pyrczak, Kamil Marud
 // @run-at          document-end
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=waze.com
-// @downloadURL https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.user.js
-// @updateURL https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.meta.js
+// @icon            https://www.google.com/s2/favicons?sz=64&domain=waze.com
+// @downloadURL     https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.user.js
+// @updateURL       https://update.greasyfork.org/scripts/395614/geoportalgovpl%20layers%20for%20WME%20%28API%20Jan%202020%29.meta.js
 // ==/UserScript==
 
 /**
  * Source code: https://github.com/TKr/WME-geoportal - deprecated
- * Source code: https://github.com/strah/WME-geoportal.pl
+ * Source code: https://github.com/strah/WME-geoportal.pl - versions up to 0.2.15.21
+ * Source code: https://github.com/kmarud/WME-geoportal.pl
  */
 
 
@@ -49,7 +50,6 @@
  *  0.2.14.0 - fixed adding toggle on layer list (new WME version)
  */
 (function () {
-    function geoportal_run() {
         var GEOPORTAL = { ver: "1.0" };
         GEOPORTAL.init = function(w)
         {
@@ -71,13 +71,12 @@
             const wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?";
             const wms_parcels="https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?";
             const wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&"
-            console.log(w);
             const my_wazeMap = w;
 
-            var epsg900913 = new window.OpenLayers.Projection("EPSG:900913");
-            var epsg4326 = new window.OpenLayers.Projection("EPSG:4326", {defaults:"EPSG:4326"});
+            const epsg900913 = new window.OpenLayers.Projection("EPSG:900913");
+            const epsg4326 = new window.OpenLayers.Projection("EPSG:4326");
 
-            const getUrl4326 = function (bounds) {
+            const getUrlAsEpsg4326 = function (bounds) {
                 bounds = bounds.clone();
                 bounds = this.adjustBounds(bounds);
 
@@ -93,7 +92,7 @@
                 return requestString;
             };
 
-            const getFullRequestString4326 = function(newParams, altUrl) {
+            const setEpsg4326 = function(newParams, altUrl) {
                 this.params.CRS="EPSG:4326";
                 return window.OpenLayers.Layer.Grid.prototype.getFullRequestString.apply(this, arguments);
             };
@@ -118,7 +117,7 @@
                 }
             };
 
-            const geop_orto_wmts = new window.OpenLayers.Layer.WMS(
+            const geop_orto = new window.OpenLayers.Layer.WMS(
                 "Geoportal - ortofoto",
                 wms_service_orto,
                 {
@@ -127,34 +126,15 @@
                     version: "1.3.0"
                 },
                 {
-                    uniqueName: "orto1",
-                    isBaseLayer: false,
-                    visibility: false,
-                    singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
-                }
-            );
-
-            var geop_orto = new window.OpenLayers.Layer.WMS(
-                "Geoportal - ortofoto",
-                wms_service_orto,
-                {
-                    layers: "Raster",
-                    format: "image/jpeg",
-                    version: "1.3.0"
-                },
-                {
-                    uniqueName: "orto1",
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: false,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_orto_high = new window.OpenLayers.Layer.WMS(
+            const geop_orto_high = new window.OpenLayers.Layer.WMS(
                 "Geoportal - ortofoto high res",
                 wms_service_orto_high,
                 {
@@ -163,16 +143,15 @@
                     version: "1.3.0"
                 },
                 {
-                    uniqueName: "ortoHighRes",
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: false,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_osm = new window.OpenLayers.Layer.WMS(
+            const geop_osm = new window.OpenLayers.Layer.WMS(
                 "Geoportal - OSM",
                 wms_osm,
                 {
@@ -181,16 +160,15 @@
                     version: "1.3.0",
                 },
                 {
-                    uniqueName: "osm",
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_adresy2 = new window.OpenLayers.Layer.WMS(
+            const geop_adresy = new window.OpenLayers.Layer.WMS(
                 "Geoportal - adresy",
                 wms_bdot,
                 {
@@ -201,13 +179,13 @@
                 {
                     isBaseLayer: false,
                     visibility:false,
-                    getURL: getUrl4326,
+                    getURL: getUrlAsEpsg4326,
                     singleTile: true,
-                    getFullRequestString: getFullRequestString4326
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_miejsca = new window.OpenLayers.Layer.WMS(
+            const geop_miejsca = new window.OpenLayers.Layer.WMS(
                 "Geoportal - place",
                 wms_bdot,
                 {
@@ -219,13 +197,13 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
 
-            var geop_ulice= new window.OpenLayers.Layer.WMS(
+            const geop_ulice= new window.OpenLayers.Layer.WMS(
                 "Geoportal - ulice",
                 wms_bdot,
                 {
@@ -238,12 +216,12 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_komplet= new window.OpenLayers.Layer.WMS(
+            const geop_komplet= new window.OpenLayers.Layer.WMS(
                 "Geoportal - adresy, place i ulice w jednym",
                 wms_bdot,
                 {
@@ -255,13 +233,13 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
 
-            var geop_rail = new window.OpenLayers.Layer.WMS(
+            const geop_rail = new window.OpenLayers.Layer.WMS(
                 "Geoportal - przejazdy kolejowe (wymaganay duży zoom)",
                 wms_rail,
                 {
@@ -273,12 +251,12 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_mileage = new window.OpenLayers.Layer.WMS(
+            const geop_mileage = new window.OpenLayers.Layer.WMS(
                 "Geoportal - drogi",
                 wms_mileage,
                 {
@@ -290,12 +268,12 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_parcels = new window.OpenLayers.Layer.WMS(
+            const geop_parcels = new window.OpenLayers.Layer.WMS(
                 "Geoportal - podział adm",
                 wms_parcels,
                 {
@@ -307,12 +285,12 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
-            var geop_b_city = new window.OpenLayers.Layer.WMS(
+            const geop_b_city = new window.OpenLayers.Layer.WMS(
                 "Geoportal - Miasta",
                 wms_border_city,
                 {
@@ -324,14 +302,14 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
 
 
-            var geop_b_woj = new window.OpenLayers.Layer.WMS(
+            const geop_b_woj = new window.OpenLayers.Layer.WMS(
                 "Geoportal - województwa",
                 wms_border_city,
                 {
@@ -343,13 +321,13 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
 
-            var geop_b_pl = new window.OpenLayers.Layer.WMS(
+            const geop_b_pl = new window.OpenLayers.Layer.WMS(
                 "Geoportal - Granica PL",
                 wms_border_city,
                 {
@@ -361,8 +339,8 @@
                     isBaseLayer: false,
                     visibility: false,
                     singleTile: true,
-                    getURL: getUrl4326,
-                    getFullRequestString: getFullRequestString4326
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
                 }
             );
 
@@ -380,8 +358,8 @@
                 my_wazeMap.addLayer(geop_osm);
                 geoportalAddLayer(geop_osm, false);
 
-                my_wazeMap.addLayer(geop_adresy2);
-                geoportalAddLayer(geop_adresy2, false);
+                my_wazeMap.addLayer(geop_adresy);
+                geoportalAddLayer(geop_adresy, true);
 
                 my_wazeMap.addLayer(geop_ulice);
                 geoportalAddLayer(geop_ulice, false);
@@ -390,7 +368,7 @@
                 geoportalAddLayer(geop_miejsca, false);
 
                 my_wazeMap.addLayer(geop_komplet);
-                geoportalAddLayer(geop_komplet, true);
+                geoportalAddLayer(geop_komplet, false);
 
                 my_wazeMap.addLayer(geop_rail);
                 geoportalAddLayer(geop_rail, false);
@@ -417,14 +395,14 @@
 
         GEOPORTAL.OrtoTimer = function() {
             setTimeout(function(){
-                var a = window.W.map.getLayersBy("uniqueName","orto1");
-                if (a[0]) a[0].setZIndex(2050);
+                var orto = window.W.map.getLayerByUniqueName("Geoportal - ortofoto");
+                if (orto) orto.setZIndex(2050);
 
-                var b = window.W.map.getLayersBy("uniqueName","ortoHighRes");
-                if (b[0]) b[0].setZIndex(2050);
+                var ortoHighRes = window.W.map.getLayerByUniqueName("Geoportal - ortofoto high res");
+                if (ortoHighRes) ortoHighRes.setZIndex(2050);
 
-                var c = window.W.map.getLayersBy("uniqueName","osm");
-                if (c[0]) c[0].setZIndex(2050);
+                var osm = window.W.map.getLayerByUniqueName("Geoportal - OSM");
+                if (osm) osm.setZIndex(2050);
 
                 GEOPORTAL.OrtoTimer();
             },1000);
@@ -435,7 +413,7 @@
                 if (document.getElementById('layer-switcher-group_display') != null) {
                     this.init(window.W.map);
                 } else {
-                    console.log("Geoportal: WME not initialized yet, trying again later.");
+                    console.log("->Geoportal: WME not initialized yet, trying again later.");
                     setTimeout(function(){
                         GEOPORTAL.initBootstrap();
                     },1000);
@@ -449,7 +427,4 @@
             }
         };
         GEOPORTAL.initBootstrap();
-    }
-    geoportal_run();
-
 })();
