@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Geoportal Waze integration
-// @version         1.0
+// @version         1.1
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -24,6 +24,7 @@
 
 /* Changelog:
  *
+ *  1.1 - Added Gminy and Wojewodztwa
  *  1.0 - Refactored, simplified code
  *  0.2.15.21 - added city, voivodeship and country borders overlay (by Falcon4Tech)
  *  0.2.15.20 - css tweaks - moving toggles to the "view" section
