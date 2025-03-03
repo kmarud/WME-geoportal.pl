@@ -308,7 +308,39 @@
                 }
             );
 
+            const geop_b_gminy = new window.OpenLayers.Layer.WMS(
+                "Geoportal - gminy",
+                wms_border_city,
+                {
+                    layers: "A03_Granice_gmin",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
 
+            const geop_b_powiaty = new window.OpenLayers.Layer.WMS(
+                "Geoportal - powiaty",
+                wms_border_city,
+                {
+                    layers: "A02_Granice_powiatow",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
 
             const geop_b_woj = new window.OpenLayers.Layer.WMS(
                 "Geoportal - województwa",
@@ -382,6 +414,12 @@
 
                 my_wazeMap.addLayer(geop_b_city);
                 geoportalAddLayer(geop_b_city, false);
+
+                my_wazeMap.addLayer(geop_b_gminy);
+                geoportalAddLayer(geop_b_gminy, false);
+
+                my_wazeMap.addLayer(geop_b_powiaty);
+                geoportalAddLayer(geop_b_powiaty, false);
 
                 my_wazeMap.addLayer(geop_b_woj);
                 geoportalAddLayer(geop_b_woj, false);
