@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Geoportal Waze integration
-// @version         1.1
+// @version         1.2
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -23,7 +23,7 @@
 
 
 /* Changelog:
- *
+ *  1.2 - Disable loading ortofoto layer on start
  *  1.1 - Added Gminy and Wojewodztwa
  *  1.0 - Refactored, simplified code
  *  0.2.15.21 - added city, voivodeship and country borders overlay (by Falcon4Tech)
@@ -384,7 +384,7 @@
             {
 
                 my_wazeMap.addLayer(geop_orto);
-                geoportalAddLayer(geop_orto, true);
+                geoportalAddLayer(geop_orto, false);
 
                 my_wazeMap.addLayer(geop_orto_high);
                 geoportalAddLayer(geop_orto_high, false);
