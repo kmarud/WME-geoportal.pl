@@ -246,11 +246,7 @@
             const geop_rail = new window.OpenLayers.Layer.WMS(
                 "Geoportal - przejazdy kolejowe (wymaganay duży zoom)",
                 wms_rail,
-                {                if(usrRank >= 3) {
-                    my_wazeMap.addLayer(geop_osm);
-                    geoportalAddLayer(geop_osm, false);
-                }
-
+                {
                     layers: "PMT_Linie_Kolejowe_Sp__z_o_o_,Kopalnia_Piasku_KOTLARNIA_-_Linie_Kolejowe_Sp__z__o_o_,Jastrzębska_Spółka_Kolejowa_Sp__z_o_o_,Infra_SILESIA_S_A_,EUROTERMINAL_Sławków_Sp__z_o_o_,Dolnośląska_Służba_Dróg_i_Kolei_we_Wrocławiu,CARGOTOR_Sp__z_o_o_,PKP_SKM_w_Trójmieście_Sp__z_o_o_,PKP_Linia_Hutnicza_Szerokotorowa_Sp__z_o__o_,PKP_Polskie_Linie_Kolejowe",
                     transparent: "true",
                     version: "1.3.0",
