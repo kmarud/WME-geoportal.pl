@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Geoportal Waze integration
-// @version         1.2
+// @version         1.3
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -23,6 +23,7 @@
 
 
 /* Changelog:
+ *  1.3 - Hide some option depending on user rank
  *  1.2 - Disable loading ortofoto layer on start
  *  1.1 - Added Gminy and Wojewodztwa
  *  1.0 - Refactored, simplified code
@@ -58,6 +59,7 @@
             console.log('Geoportal: Version ' + this.ver + ' init start');
 
             const style = document.createElement('style');
+            const usrRank = window.W.loginManager.getUserRank();
             style.innerHTML = `
                 .layer-switcher ul[class^="collapsible"]  {
                     max-height: none;
@@ -65,14 +67,14 @@
             `;
             document.head.appendChild(style);
 
-            const wms_service_orto ="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?";
-            const wms_service_orto_high="https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/HighResolution?";
-            const wms_osm="https://mapy.geoportal.gov.pl/wss/ext/OSM/BaseMap/service?";
+            const wms_service_orto = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?";
+            const wms_service_orto_high = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/HighResolution?";
+            const wms_osm = "https://mapy.geoportal.gov.pl/wss/ext/OSM/BaseMap/service?";
             const wms_bdot = "https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaNumeracjiAdresowej?request=GetMap&";
             const wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
             const wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?";
-            const wms_parcels="https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?";
-            const wms_border_city="https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
+            const wms_parcels = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?";
+            const wms_border_city = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
             const my_wazeMap = w;
 
             const epsg900913 = new window.OpenLayers.Projection("EPSG:900913");
@@ -244,7 +246,11 @@
             const geop_rail = new window.OpenLayers.Layer.WMS(
                 "Geoportal - przejazdy kolejowe (wymaganay duży zoom)",
                 wms_rail,
-                {
+                {                if(usrRank >= 3) {
+                    my_wazeMap.addLayer(geop_osm);
+                    geoportalAddLayer(geop_osm, false);
+                }
+
                     layers: "PMT_Linie_Kolejowe_Sp__z_o_o_,Kopalnia_Piasku_KOTLARNIA_-_Linie_Kolejowe_Sp__z__o_o_,Jastrzębska_Spółka_Kolejowa_Sp__z_o_o_,Infra_SILESIA_S_A_,EUROTERMINAL_Sławków_Sp__z_o_o_,Dolnośląska_Służba_Dróg_i_Kolei_we_Wrocławiu,CARGOTOR_Sp__z_o_o_,PKP_SKM_w_Trójmieście_Sp__z_o_o_,PKP_Linia_Hutnicza_Szerokotorowa_Sp__z_o__o_,PKP_Polskie_Linie_Kolejowe",
                     transparent: "true",
                     version: "1.3.0",
@@ -389,8 +395,10 @@
                 my_wazeMap.addLayer(geop_orto_high);
                 geoportalAddLayer(geop_orto_high, false);
 
-                my_wazeMap.addLayer(geop_osm);
-                geoportalAddLayer(geop_osm, false);
+                if(usrRank >= 2) {
+                    my_wazeMap.addLayer(geop_osm);
+                    geoportalAddLayer(geop_osm, false);
+                }
 
                 my_wazeMap.addLayer(geop_adresy);
                 geoportalAddLayer(geop_adresy, true);
