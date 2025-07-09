@@ -23,6 +23,7 @@
 
 
 /* Changelog:
+ *  1.4 - Added new layers
  *  1.3 - Hide some option depending on user rank
  *  1.2 - Disable loading ortofoto layer on start
  *  1.1 - Added Gminy and Wojewodztwa
@@ -70,11 +71,14 @@
             const wms_service_orto = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?";
             const wms_service_orto_high = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/HighResolution?";
             const wms_osm = "https://mapy.geoportal.gov.pl/wss/ext/OSM/BaseMap/service?";
-            const wms_bdot = "https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaNumeracjiAdresowej?request=GetMap&";
+            const wms_adresy = "https://mapy.geoportal.gov.pl/wss/ext/KrajowaIntegracjaNumeracjiAdresowej?request=GetMap&";
             const wms_rail = "https://mapy.geoportal.gov.pl/wss/service/sdi/Przejazdy/get?REQUEST=GetMap&";
             const wms_mileage = "https://mapy.geoportal.gov.pl/wss/ext/OSM/SiecDrogowaOSM?";
+            const wms_topo = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaBazDanychObiektowTopograficznych?";
             const wms_parcels = "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?";
             const wms_border_city = "https://mapy.geoportal.gov.pl/wss/service/PZGIK/PRG/WMS/AdministrativeBoundaries?REQUEST=GetMap&";
+            const wms_kompozycja = "https://mapy.geoportal.gov.pl/wss/service/pub/guest/kompozycja_BDOT10k_WMS/MapServer/WMSServer"
+
             const my_wazeMap = w;
 
             const epsg900913 = new window.OpenLayers.Projection("EPSG:900913");
@@ -117,6 +121,18 @@
                     });
 
                     togglerContainer.appendChild(toggler);
+                    displayGroup.appendChild(togglerContainer);
+                }
+            };
+
+             const addText = function(text) {
+                var displayGroupSelector = document.querySelector('#layer-switcher-region .menu .list-unstyled');
+                if (displayGroupSelector != null) {
+                    var displayGroup = displayGroupSelector.querySelector('li.group:nth-child(5) ul');
+
+                    var togglerContainer = document.createElement('li');
+                    togglerContainer.appendChild(document.createTextNode(text));
+
                     displayGroup.appendChild(togglerContainer);
                 }
             };
@@ -174,7 +190,7 @@
 
             const geop_adresy = new window.OpenLayers.Layer.WMS(
                 "Geoportal - adresy",
-                wms_bdot,
+                wms_adresy,
                 {
                     layers: "prg-adresy",
                     transparent: "true",
@@ -191,7 +207,7 @@
 
             const geop_miejsca = new window.OpenLayers.Layer.WMS(
                 "Geoportal - place",
-                wms_bdot,
+                wms_adresy,
                 {
                     layers: "prg-place",
                     transparent: "true",
@@ -209,7 +225,7 @@
 
             const geop_ulice= new window.OpenLayers.Layer.WMS(
                 "Geoportal - ulice",
-                wms_bdot,
+                wms_adresy,
                 {
                     layers: "prg-ulice",
                     transparent: "true",
@@ -227,7 +243,7 @@
 
             const geop_komplet= new window.OpenLayers.Layer.WMS(
                 "Geoportal - adresy, place i ulice w jednym",
-                wms_bdot,
+                wms_adresy,
                 {
                     layers: "prg-adresy,prg-place,prg-ulice",
                     transparent: "true",
@@ -380,10 +396,200 @@
                 }
             );
 
+            const geop_topo = new window.OpenLayers.Layer.WMS(
+                "Geoportal - obiekty topograficzne",
+                wms_topo,
+                {
+                    layers: "bdot",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+            const geop_bdot1 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Droga dojazdowa lub inna gruntowa",
+                wms_kompozycja,
+                {
+                    layers: "DrDGr",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+
+            const geop_bdot2 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Droga lokalna gruntowa",
+                wms_kompozycja,
+                {
+                    layers: "DrLGr",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+             const geop_bdot3 = new window.OpenLayers.Layer.WMS(
+                "BDOT -Jezdnia drogi lokalnej dojazdowej lub innej o nawierzchni utwardzonej",
+                wms_kompozycja,
+                {
+                    layers: "JDrLNUt",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+           const geop_bdot4 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Jezdnia drogi lokalnej dojazdowej lub innej o nawierzchni twardej",
+                wms_kompozycja,
+                {
+                    layers: "JDLNTw",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+          const geop_bdot5 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Jezdnia drogi zbiorczej o nawierzchni twardej",
+                wms_kompozycja,
+                {
+                    layers: "JDrZTw",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+              const geop_bdot6 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Jezdnia drogi głównej",
+                wms_kompozycja,
+                {
+                    layers: "JDrG",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+
+               const geop_bdot7 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Droga ekspresowa lub Głowna ruchu przyspieszonego w budowie",
+                wms_kompozycja,
+                {
+                    layers: "DrEk",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+                const geop_bdot8 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Jezdnia drogi ekspresowej lub głównej ruchu przyspieszonego",
+                wms_kompozycja,
+                {
+                    layers: "JDrEk",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+               const geop_bdot9 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Jezdnia autostrady",
+                wms_kompozycja,
+                {
+                    layers: "JAu",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
+
+            const geop_bdot10 = new window.OpenLayers.Layer.WMS(
+                "BDOT - Numer drogi",
+                wms_kompozycja,
+                {
+                    layers: "NrDr",
+                    transparent: "true",
+                    version: "1.3.0",
+                },
+                {
+                    isBaseLayer: false,
+                    visibility: false,
+                    singleTile: true,
+                    getURL: getUrlAsEpsg4326,
+                    getFullRequestString: setEpsg4326
+                }
+            );
 
             console.log('Geoportal: adding layers');
             if(my_wazeMap.getLayersByName("Geoportal - orto").length == 0)
             {
+
+                addText("-- Warstwy dodatkowe --")
 
                 my_wazeMap.addLayer(geop_orto);
                 geoportalAddLayer(geop_orto, false);
@@ -431,6 +637,42 @@
 
                 my_wazeMap.addLayer(geop_b_pl);
                 geoportalAddLayer(geop_b_pl, false);
+
+                addText("Warsty są esperymentalne (zoom 18+), używaj rozsądnie")
+
+                my_wazeMap.addLayer(geop_topo);
+                geoportalAddLayer(geop_topo, false);
+                    
+                my_wazeMap.addLayer(geop_bdot1);
+                geoportalAddLayer(geop_bdot1, false);
+
+                my_wazeMap.addLayer(geop_bdot2);
+                geoportalAddLayer(geop_bdot2, false);
+
+                my_wazeMap.addLayer(geop_bdot3);
+                geoportalAddLayer(geop_bdot3, false);
+
+                my_wazeMap.addLayer(geop_bdot4);
+                geoportalAddLayer(geop_bdot4, false);
+
+                my_wazeMap.addLayer(geop_bdot5);
+                geoportalAddLayer(geop_bdot5, false);
+
+                my_wazeMap.addLayer(geop_bdot6);
+                geoportalAddLayer(geop_bdot6, false);
+
+                my_wazeMap.addLayer(geop_bdot7);
+                geoportalAddLayer(geop_bdot7, false);
+
+                my_wazeMap.addLayer(geop_bdot8);
+                geoportalAddLayer(geop_bdot8, false);
+
+                my_wazeMap.addLayer(geop_bdot9);
+                geoportalAddLayer(geop_bdot9, false);
+
+                my_wazeMap.addLayer(geop_bdot10);
+                geoportalAddLayer(geop_bdot10, false);
+
 
                 console.log('Geoportal: layers added');
                 this.OrtoTimer();
