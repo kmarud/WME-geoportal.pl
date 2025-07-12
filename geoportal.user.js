@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Geoportal Waze integration
-// @version         1.4.1
+// @version         1.4.2
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -23,6 +23,7 @@
 
 
 /* Changelog:
+ *  1.4.2 - Rename some layers
  *  1.4.1 - Reformat code with beautifier.io
  *  1.4 - Added new layers
  *  1.3 - Hide some option depending on user rank
@@ -384,9 +385,9 @@
     );
 
     const geop_bdot1 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Droga dojazdowa lub inna gruntowa",
+      "BDOT - Gruntowa",
       wms_kompozycja, {
-        layers: "DrDGr",
+        layers: "DrDGr,DrLGr",
         transparent: "true",
         version: "1.3.0",
       }, {
@@ -400,22 +401,7 @@
 
 
     const geop_bdot2 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Droga lokalna gruntowa",
-      wms_kompozycja, {
-        layers: "DrLGr",
-        transparent: "true",
-        version: "1.3.0",
-      }, {
-        isBaseLayer: false,
-        visibility: false,
-        singleTile: true,
-        getURL: getUrlAsEpsg4326,
-        getFullRequestString: setEpsg4326
-      }
-    );
-
-    const geop_bdot3 = new window.OpenLayers.Layer.WMS(
-      "BDOT -Jezdnia drogi lokalnej dojazdowej lub innej o nawierzchni utwardzonej",
+      "BDOT - Utwardzona",
       wms_kompozycja, {
         layers: "JDrLNUt",
         transparent: "true",
@@ -429,38 +415,23 @@
       }
     );
 
+    const geop_bdot3 = new window.OpenLayers.Layer.WMS(
+      "BDOT - Twarda",
+      wms_kompozycja, {
+        layers: "JDLNTw,JDrZTw",
+        transparent: "true",
+        version: "1.3.0",
+      }, {
+        isBaseLayer: false,
+        visibility: false,
+        singleTile: true,
+        getURL: getUrlAsEpsg4326,
+        getFullRequestString: setEpsg4326
+      }
+    );
+
     const geop_bdot4 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Jezdnia drogi lokalnej dojazdowej lub innej o nawierzchni twardej",
-      wms_kompozycja, {
-        layers: "JDLNTw",
-        transparent: "true",
-        version: "1.3.0",
-      }, {
-        isBaseLayer: false,
-        visibility: false,
-        singleTile: true,
-        getURL: getUrlAsEpsg4326,
-        getFullRequestString: setEpsg4326
-      }
-    );
-
-    const geop_bdot5 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Jezdnia drogi zbiorczej o nawierzchni twardej",
-      wms_kompozycja, {
-        layers: "JDrZTw",
-        transparent: "true",
-        version: "1.3.0",
-      }, {
-        isBaseLayer: false,
-        visibility: false,
-        singleTile: true,
-        getURL: getUrlAsEpsg4326,
-        getFullRequestString: setEpsg4326
-      }
-    );
-
-    const geop_bdot6 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Jezdnia drogi głównej",
+      "BDOT - Główna",
       wms_kompozycja, {
         layers: "JDrG",
         transparent: "true",
@@ -475,7 +446,7 @@
     );
 
 
-    const geop_bdot7 = new window.OpenLayers.Layer.WMS(
+    const geop_bdot5 = new window.OpenLayers.Layer.WMS(
       "BDOT - Droga ekspresowa lub Głowna ruchu przyspieszonego w budowie",
       wms_kompozycja, {
         layers: "DrEk",
@@ -490,7 +461,7 @@
       }
     );
 
-    const geop_bdot8 = new window.OpenLayers.Layer.WMS(
+    const geop_bdot6 = new window.OpenLayers.Layer.WMS(
       "BDOT - Jezdnia drogi ekspresowej lub głównej ruchu przyspieszonego",
       wms_kompozycja, {
         layers: "JDrEk",
@@ -505,8 +476,8 @@
       }
     );
 
-    const geop_bdot9 = new window.OpenLayers.Layer.WMS(
-      "BDOT - Jezdnia autostrady",
+    const geop_bdot7 = new window.OpenLayers.Layer.WMS(
+      "BDOT - Autostrada",
       wms_kompozycja, {
         layers: "JAu",
         transparent: "true",
@@ -520,7 +491,7 @@
       }
     );
 
-    const geop_bdot10 = new window.OpenLayers.Layer.WMS(
+    const geop_bdot8 = new window.OpenLayers.Layer.WMS(
       "BDOT - Numer drogi",
       wms_kompozycja, {
         layers: "NrDr",
@@ -615,12 +586,6 @@
 
       my_wazeMap.addLayer(geop_bdot8);
       geoportalAddLayer(geop_bdot8, false);
-
-      my_wazeMap.addLayer(geop_bdot9);
-      geoportalAddLayer(geop_bdot9, false);
-
-      my_wazeMap.addLayer(geop_bdot10);
-      geoportalAddLayer(geop_bdot10, false);
 
 
       console.log('Geoportal: layers added');
