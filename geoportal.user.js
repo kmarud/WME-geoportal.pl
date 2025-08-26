@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Geoportal Waze integration
-// @version         1.4.2
+// @version         1.4.3
 // @description     Adds geoportal.gov.pl overlays ("satelite view", cities, places, house numbers)
 // @include         https://*.waze.com/*/editor*
 // @include         https://*.waze.com/editor*
@@ -23,6 +23,7 @@
 
 
 /* Changelog:
+ *  1.4.3 - Fix issue with checkboxes logic
  *  1.4.2 - Rename some layers
  *  1.4.1 - Reformat code with beautifier.io
  *  1.4 - Added new layers
@@ -115,12 +116,10 @@
         var toggler = document.createElement('wz-checkbox');
         var togglerContainer = document.createElement('li');
         toggler.appendChild(document.createTextNode(layer.name));
-        if (defaultChecked) {
-          toggler.checked = true;
-          layer.setVisibility(true);
-        }
-        toggler.addEventListener('click', function(e) {
-          layer.setVisibility(e.target.checked);
+        toggler.checked = defaultChecked;
+        layer.setVisibility(defaultChecked);
+        toggler.addEventListener('change', function() {
+          layer.setVisibility(this.checked);
         });
 
         togglerContainer.appendChild(toggler);
